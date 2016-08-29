@@ -4,6 +4,6 @@ var creepQuotaController = require('creep.quotaController');
 module.exports.loop = function () {
 
     creepActionController.run();
-    //creepQuotaController.run();
+    creepQuotaController.run();
     //console.log('==========');
 }
