@@ -1,0 +1,73 @@
+var actions = {
+    harvest: function(creep) {
+        if(creep.memory.source) {
+            var source = Game.getObjectById(creep.memory.source.id);
+        }
+        else{
+            var source = creep.pos.findClosestByRange(FIND_SOURCES);
+        }
+        creep.harvest(source) == 0 || creep.moveTo(source);
+    },
+    transfer: function(creep) {
+        var target;
+        if(creep.memory.target){
+            target = creep.memory.target;
+            target = Game.getObjectById(target.id)
+        }
+        else{
+            var targets = []
+            var extensions = creep.room.find(FIND_STRUCTURES, {filter: (structure) => {return (structure.structureType == STRUCTURE_EXTENSION) && structure.energy < structure.energyCapacity;}});
+            var towers = creep.room.find(FIND_STRUCTURES, {filter: (structure) => {return (structure.structureType == STRUCTURE_TOWER) && structure.energy < structure.energyCapacity;}});
+            var spawns = creep.room.find(FIND_STRUCTURES, {filter: (structure) => {return structure.structureType == STRUCTURE_SPAWN && structure.energy < structure.energyCapacity;}});
+
+            targets = targets.concat(spawns);
+            targets = targets.concat(extensions);
+            targets = targets.concat(towers);
+            target = targets[0];
+
+        }
+
+        if(target){
+            creep.transfer(target, RESOURCE_ENERGY) == 0 || creep.moveTo(target);
+        }
+    },
+    build: function(creep) {
+        // repair
+        var targets = creep.room.find(FIND_STRUCTURES, {
+            filter: (structure) => {
+                return structure.structureType !== STRUCTURE_WALL && structure.hits < structure.hitsMax;
+                }
+        });
+        if(targets[0]) {
+            if(creep.repair(targets[0]) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(targets[0]);
+            }
+            return;
+        }
+
+
+        // build
+        var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
+        if(targets.length) {
+            if(creep.build(targets[0]) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(targets[0]);
+            }
+        }
+    },
+    upgrade: function(creep) {
+        if(creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
+            creep.moveTo(creep.room.controller);
+        }
+    },
+    clearSource: function(creep){
+        // move away from mining area
+	    var closestSource = creep.pos.findClosestByRange(FIND_SOURCES);
+
+	    if(creep.pos.getRangeTo(closestSource) == 1){
+	        var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
+	        var target = targets[0] || Game.spawns['Spawn1'];
+	        creep.moveTo(target);
+	    };
+    }
+};
+module.exports = actions;

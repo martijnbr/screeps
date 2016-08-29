@@ -1,0 +1,27 @@
+var roles = require('creep.roles');
+
+var controller = {
+    run: function(){
+
+        for(var name in Game.creeps) {
+            var creep = Game.creeps[name];
+            if(creep.memory.role == 'harvester') {
+                roles.harvester(creep);
+            }
+            if(creep.memory.role == 'upgrader') {
+                roles.upgrader(creep);
+            }
+            if(creep.memory.role == 'builder') {
+                roles.builder(creep);
+            }
+            if(creep.memory.role == 'mechanized'){
+                roles.mechanized(creep);
+            }
+            if(creep.memory.role == 'miner') {
+                roles.miner(creep);
+            }
+        }
+    }
+};
+
+module.exports = controller;

@@ -1,0 +1,32 @@
+var definitions = require('definitions');
+
+var controller = {
+    run: function(){
+        var active = {};
+        var name, creep, role;
+        for(name in Game.creeps) {
+            creep = Game.creeps[name];
+            role = creep.memory.role;
+            active[role] ? active[role] : active[role] = 0;
+            active[role] += 1;
+        }
+
+        for(role in definitions.roles) {
+            var role_quota = definitions.roles[role];
+
+            if(!active[role]) {active[role] = 0;}
+            if(active[role] < role_quota.quota ) {
+             //   console.log('I want to create a ' + role);
+                //console.log(Game.spawns['Spawn1'].canCreateCreep(role_quota.body))
+                if(Game.spawns['Spawn1'].canCreateCreep(role_quota.body) == 0){
+                    console.log('buuilding a ' + role);
+                    Game.spawns['Spawn1'].createCreep(role_quota.body, {role:role});
+                }
+                break;
+
+            }
+        }
+    }
+};
+
+module.exports = controller;
