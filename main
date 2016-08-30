@@ -5,5 +5,4 @@ module.exports.loop = function () {
 
     creepActionController.run();
     creepQuotaController.run();
-    //console.log('==========');
 }
